@@ -14,7 +14,7 @@ def calculate_number_of_payments(a, p, i):
 
 
 def calculate_differentiated_payments(p, i, n, m):
-    return p/n
+    return (p / n) + i * (p - ((p * (m - 1)) / n))
 
 
 print(
