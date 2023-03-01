@@ -13,6 +13,10 @@ def calculate_number_of_payments(a, p, i):
     return math.log(a / (a - i * p), 1 + i)
 
 
+def calculate_differentiated_payments(p, i, n, m):
+    return p/n
+
+
 print(
     """What do you want to calculate?
 type "n" for number of monthly payments,
