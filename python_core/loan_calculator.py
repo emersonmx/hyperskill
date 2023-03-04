@@ -1,3 +1,4 @@
+import argparse
 import math
 
 
@@ -17,27 +18,72 @@ def calculate_differentiated_payments(p, i, n, m):
     return (p / n) + i * (p - ((p * (m - 1)) / n))
 
 
-print(
-    """What do you want to calculate?
-type "n" for number of monthly payments,
-type "a" for annuity monthly payment amount,
-type "p" for loan principal:"""
-)
-option = input()
+def has_errors(args):
+    args_tuple = (
+        args.type,
+        args.payment,
+        args.principal,
+        args.periods,
+        args.interest,
+    )
+    type_, payment, _, periods, interest = args_tuple
+    if type_ not in ["annuity", "diff"]:
+        return True
+    if len([a for a in args_tuple if a is not None]) != 4:
+        return True
+    if type_ == "diff":
+        if payment is not None:
+            return True
+        if periods < 0:
+            return True
+    if type_ == "annuity" and interest is None:
+        return True
+    return False
 
-if option == "n":
-    print("Enter the loan principal:")
-    loan_principal = float(input())
-    print("Enter the monthly payment:")
-    annuity_payment = float(input())
-    print("Enter the loan interest:")
-    loan_interest = float(input()) / 12 / 100
+
+def show_annuity_payment(args):
+    payment = args.payment
+    principal = args.principal
+    periods = args.periods
+    interest = args.interest / 12 / 100
+
+    payment = math.ceil(
+        calculate_annuity_payment(
+            principal,
+            interest,
+            periods,
+        )
+    )
+
+    print(f"Your monthly payment = {payment}!")
+
+
+def show_loan_principal(args):
+    payment = args.payment
+    periods = args.periods
+    interest = args.interest / 12 / 100
+
+    loan_principal = round(
+        calculate_loan_principal(
+            payment,
+            interest,
+            periods,
+        )
+    )
+
+    print(f"Your loan principal = {loan_principal}!")
+
+
+def show_number_of_payments(args):
+    payment = args.payment
+    principal = args.principal
+    interest = args.interest / 12 / 100
 
     n_payments = math.ceil(
         calculate_number_of_payments(
-            annuity_payment,
-            loan_principal,
-            loan_interest,
+            payment,
+            principal,
+            interest,
         )
     )
     years, months = divmod(n_payments, 12)
@@ -61,37 +107,51 @@ if option == "n":
 
     message = f"It will take {years_month_message} to repay this loan!"
     print(message)
-elif option == "a":
-    print("Enter the loan principal:")
-    loan_principal = float(input())
-    print("Enter the number of periods:")
-    periods = float(input())
-    print("Enter the loan interest:")
-    loan_interest = float(input()) / 12 / 100
+    print()
+    overpayment = int(n_payments * payment - principal)
+    print(f"Overpayment = {overpayment}")
 
-    payment = math.ceil(
-        calculate_annuity_payment(
-            loan_principal,
-            loan_interest,
-            periods,
+
+def show_differentiated_payments(args):
+    principal = args.principal
+    periods = args.periods
+    interest = args.interest / 12 / 100
+    sum = 0
+    for month in range(1, args.periods + 1):
+        result = int(
+            math.ceil(
+                calculate_differentiated_payments(
+                    principal,
+                    interest,
+                    periods,
+                    month,
+                )
+            )
         )
-    )
+        sum += result
+        print(f"Month {month}: payment is {result}")
 
-    print(f"Your monthly payment = {payment}!")
-elif option == "p":
-    print("Enter the annuity payment:")
-    annuity_payment = float(input())
-    print("Enter the number of periods:")
-    periods = float(input())
-    print("Enter the loan interest:")
-    loan_interest = float(input()) / 12 / 100
+    print()
+    print(f"Overpayment = {int(sum - principal)}")
 
-    loan_principal = round(
-        calculate_loan_principal(
-            annuity_payment,
-            loan_interest,
-            periods,
-        )
-    )
 
-    print(f"Your loan principal = {loan_principal}!")
+parser = argparse.ArgumentParser()
+parser.add_argument("--type")
+parser.add_argument("--payment", type=float)
+parser.add_argument("--principal", type=float)
+parser.add_argument("--periods", type=int)
+parser.add_argument("--interest", type=float)
+
+args = parser.parse_args()
+
+if has_errors(args):
+    print("Incorrect parameters")
+elif args.type == "annuity":
+    if args.payment is None:
+        show_annuity_payment(args)
+    if args.principal is None:
+        show_loan_principal(args)
+    if args.periods is None:
+        show_number_of_payments(args)
+elif args.type == "diff":
+    show_differentiated_payments(args)
