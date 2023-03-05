@@ -33,8 +33,7 @@ def get_player_input(pencils):
             print("Possible values: '1', '2' or '3'")
             continue
 
-        in_range = 1 <= player_input <= 3
-        if in_range:
+        if 1 <= player_input <= 3:
             if player_input <= pencils:
                 return player_input
             else:
