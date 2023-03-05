@@ -1,6 +1,3 @@
-PLAYERS = ["John", "Jack"]
-
-
 def get_pencil_amount():
     while True:
         try:
@@ -18,23 +15,14 @@ def get_pencil_amount():
 def get_first_player():
     while True:
         name = input()
-        if name in PLAYERS:
+        if name in ["John", "Jack"]:
             return name
 
         print("Choose between 'John' and 'Jack'")
 
 
-def get_player_index(name):
-    return PLAYERS.index(name)
-
-
-def get_player_name(index):
-    return PLAYERS[index]
-
-
 def get_next_player(name):
-    index = get_player_index(name)
-    return get_player_name((index + 1) % len(PLAYERS))
+    return "Jack" if name == "John" else "John"
 
 
 def get_player_input(pencils):
@@ -59,7 +47,7 @@ def main() -> int:
     print("How many pencils would you like to use:")
     pencils = get_pencil_amount()
 
-    print(f"Who will be the first ({', '.join(PLAYERS)}):")
+    print("Who will be the first (John, Jack):")
     player = get_first_player()
 
     while pencils > 0:
