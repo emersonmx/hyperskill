@@ -1,10 +1,8 @@
-# TODO: Create functions
-# TODO: Use exceptions
-# TODO: Simplify code
 print("How many pencils would you like to use:")
 pencils = 0
-while True:
-    pencils = input().strip()
+while True:  # TODO: Create function
+    pencils = input().strip()  # TODO: Create clean_input()
+    # TODO: Use int() and catch exception
     is_negative = pencils.startswith("-") and pencils[1:].isdigit()
     is_zero = pencils.isdigit() and pencils == "0"
     if is_negative or is_zero:
@@ -18,7 +16,7 @@ while True:
 players = ["John", "Jack"]
 player_index = 0
 print(f"Who will be the first ({', '.join(players)}):")
-while True:
+while True:  # TODO: Create function
     player_name = input()
     if player_name in players:
         player_index = players.index(player_name)
@@ -26,7 +24,7 @@ while True:
     else:
         print("Choose between 'John' and 'Jack'")
 
-while pencils > 0:
+while pencils > 0:  # TODO: Create function
     print("|" * pencils)
     player_name = players[player_index]
     print(f"{player_name}'s turn:")
