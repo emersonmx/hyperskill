@@ -1,3 +1,6 @@
+# TODO: Create functions
+# TODO: Use exceptions
+# TODO: Simplify code
 print("How many pencils would you like to use:")
 pencils = 0
 while True:
