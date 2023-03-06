@@ -1,3 +1,6 @@
+import random
+
+
 def get_pencil_amount():
     while True:
         try:
@@ -42,6 +45,19 @@ def get_player_input(pencils):
             print("Possible values: '1', '2' or '3'")
 
 
+def get_bot_input(pencils):
+    taken_pencils = random.randint(1, min(3, pencils))
+    if pencils % 4 == 0:
+        taken_pencils = 3
+    elif pencils % 4 == 3:
+        taken_pencils = 2
+    elif pencils % 4 == 2:
+        taken_pencils = 1
+
+    print(taken_pencils)
+    return taken_pencils
+
+
 def main() -> int:
     print("How many pencils would you like to use:")
     pencils = get_pencil_amount()
@@ -52,7 +68,10 @@ def main() -> int:
     while pencils > 0:
         print("|" * pencils)
         print(f"{player}'s turn:")
-        pencils -= get_player_input(pencils)
+        if player == "John":
+            pencils -= get_player_input(pencils)
+        else:
+            pencils -= get_bot_input(pencils)
         player = get_next_player(player)
 
     print(f"{player} won!")
@@ -61,4 +80,4 @@ def main() -> int:
 
 
 if __name__ == "__main__":
-    raise SystemExit(main())
+    main()
