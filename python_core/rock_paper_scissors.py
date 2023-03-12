@@ -1,23 +1,37 @@
 import random
 
+DRAW = 0
+PLAYER1 = -1
+PLAYER2 = 1
+
 
 def clean_input():
     return input().strip()
 
 
-def get_result(inputs, player1, player2):
-    i = inputs.index(player1)
+def get_options():
+    input_line = clean_input()
+    if not input_line:
+        return ["rock", "paper", "scissors"]
+
+    options = input_line.split(",")
+    return [o.strip() for o in options]
+
+
+def get_result(options, player1, player2):
+    i = options.index(player1)
     j = i + 1
-    checks = inputs[j:] + inputs[:i]
+    checks = options[j:] + options[:i]
+    half_index = int(len(checks) / 2)
     if player1 == player2:
-        return None
-    elif checks.index(player2) == 0:
-        return player2
-    elif checks.index(player2) == 1:
-        return player1
+        return DRAW
+    elif checks.index(player2) < half_index:
+        return PLAYER2
+    else:
+        return PLAYER1
 
 
-def fetch_score(player_name):
+def get_score(player_name):
     with open("rating.txt", "r") as f:
         for line in f:
             name, score = line.strip().split()
@@ -26,28 +40,28 @@ def fetch_score(player_name):
     return 0
 
 
-def calculate_score(player1, player2, result):
-    if result == player1:
+def calculate_score(result):
+    if result == PLAYER1:
         return 100
-    elif result == player2:
+    elif result == PLAYER2:
         return 0
     else:
         return 50
 
 
 def main():
-    inputs = ["rock", "paper", "scissors"]
-    options = inputs + ["!rating", "!exit"]
-
     print("Enter your name:")
     player_name = clean_input()
     print(f"Hello, {player_name}")
-    score = fetch_score(player_name)
-    print(score)
+    score = get_score(player_name)
 
+    options = get_options()
+    available_options = options + ["!rating", "!exit"]
+
+    print("Okay, let's start")
     while True:
         player1 = clean_input()
-        if player1 not in options:
+        if player1 not in available_options:
             print("Invalid input")
             continue
         if player1 == "!rating":
@@ -56,13 +70,13 @@ def main():
         if player1 == "!exit":
             break
 
-        player2 = random.choice(inputs)
+        player2 = random.choice(options)
 
-        result = get_result(inputs, player1, player2)
-        score += calculate_score(player1, player2, result)
-        if result == player1:
+        result = get_result(options, player1, player2)
+        score += calculate_score(result)
+        if result == PLAYER1:
             print(f"Well done. The computer chose {player2} and failed")
-        elif result == player2:
+        elif result == PLAYER2:
             print(f"Sorry, but the computer chose {player2}")
         else:
             print(f"There is a draw ({player1})")
