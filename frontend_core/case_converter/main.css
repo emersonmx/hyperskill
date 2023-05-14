@@ -1,0 +1,32 @@
+.container {
+    font-family: Arial, sans-serif;
+    display: flex;
+    flex-flow: column;
+    padding: 10px;
+}
+
+.title {
+    font-size: 2rem;
+    margin-bottom: 5px;
+}
+
+textarea {
+    font-family: inherit;
+    font-size: inherit;
+    width: 500px;
+    height: 300px;
+    padding: 10px;
+    border: 1px solid gray;
+}
+
+.buttons {
+    margin: 10px 0;
+}
+
+button {
+    color: #0a0a0a;
+    background: #ffa07a;
+    border: 1px solid #ffa07a;
+    border-radius: 2px;
+    padding: 5px 10px;
+}
