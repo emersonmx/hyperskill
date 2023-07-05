@@ -61,7 +61,7 @@ def get_moves_from(x, y, width, height):
         nx = x + ox
         ny = y + oy
         if move_in_range(nx, ny, width, height):
-            yield [nx, ny]
+            yield nx, ny
 
 
 def get_valid_moves(x, y):
