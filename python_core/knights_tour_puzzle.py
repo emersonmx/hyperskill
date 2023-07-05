@@ -18,14 +18,17 @@ def make_board(width, height, fill):
     return [[fill for _ in range(width)] for _ in range(height)]
 
 
+def move_in_range(x, y, width, height):
+    return (0 <= x < width) and (0 <= y < height)
+
+
 def valid_move(x, y):
     global context
-    size = context["size"]
-    board = context["board"]
-    in_range = (0 <= x < size[0]) and (0 <= y < size[1])
-    if not in_range:
+    width, height = context["size"]
+    if not move_in_range(x, y, width, height):
         return False
 
+    board = context["board"]
     return board[y][x] == "_"
 
 
