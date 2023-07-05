@@ -1,3 +1,14 @@
+MOVE_OFFSETS = [
+    [-1, -2],
+    [1, -2],
+    [-2, -1],
+    [2, -1],
+    [-2, 1],
+    [2, 1],
+    [-1, 2],
+    [1, 2],
+]
+
 context = {}
 
 
@@ -47,17 +58,7 @@ def input_position_with_prompt(prompt):
 
 
 def get_moves_from(x, y, width, height):
-    offsets = [
-        [-1, -2],
-        [1, -2],
-        [-2, -1],
-        [2, -1],
-        [-2, 1],
-        [2, 1],
-        [-1, 2],
-        [1, 2],
-    ]
-    for ox, oy in offsets:
+    for ox, oy in MOVE_OFFSETS:
         nx = x + ox
         ny = y + oy
         if move_in_range(nx, ny, width, height):
