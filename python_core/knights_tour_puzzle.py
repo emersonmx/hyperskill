@@ -57,12 +57,59 @@ def input_position_with_prompt(prompt):
             print("Invalid move!", end=" ")
 
 
+def input_try_solve():
+    while True:
+        try:
+            answer = input("Do you want to try the puzzle? (y/n): ")
+            if answer in ("y", "n"):
+                return answer
+            raise ValueError("Invalid input!")
+        except ValueError as e:
+            print(e)
+
+
 def get_moves_from(x, y, width, height):
     for ox, oy in MOVE_OFFSETS:
         nx = x + ox
         ny = y + oy
         if move_in_range(nx, ny, width, height):
             yield nx, ny
+
+
+def build_solved_board(x, y, width, height):
+    # Adapted from:
+    # https://github.com/challengingLuck/youtube/blob/master/backtracking/knights-tour.py
+    board = [[0 for _ in range(width)] for _ in range(height)]
+    board[y][x] = 1
+    total_moves = width * height
+
+    def get_sorted_moves(board, x, y, width, height):
+        def valid_moves(x_, y_):
+            moves = get_moves_from(x_, y_, width, height)
+            return [m for m in moves if board[m[1]][m[0]] == 0]
+
+        return sorted(
+            valid_moves(x, y),
+            key=lambda m: len(valid_moves(m[0], m[1])),
+        )
+
+    def traverse(x, y, index):
+        if index > total_moves:
+            return True
+        for nx, ny in get_sorted_moves(board, x, y, width, height):
+            if board[ny][nx] == 0:
+                board[ny][nx] = index
+                if traverse(nx, ny, index + 1):
+                    return True
+                else:
+                    board[ny][nx] = 0
+
+        return False
+
+    if traverse(x, y, 2):
+        return board
+    else:
+        return []
 
 
 def get_valid_moves(x, y):
@@ -122,7 +169,6 @@ def format_cell(cell):
 
 
 def show_board(board):
-    print("Here are the possible moves:")
     show_ruler()
 
     row_length = len(board)
@@ -154,6 +200,8 @@ def setup():
     context = {
         "size": [0, 0],
         "board": [],
+        "solution": [],
+        "try_solve": False,
         "select_position": [0, 0],
         "visited": 0,
     }
@@ -163,11 +211,25 @@ def setup():
     context["board"] = make_board(width, height, "_")
     x, y = input_position_with_prompt("Enter the knight's starting position: ")
     context["select_position"] = [x, y]
-    update_board(x, y)
+
+    try_solve = input_try_solve() == "y"
+    context["try_solve"] = try_solve
+
+    solution = build_solved_board(x, y, width, height)
+    context["solution"] = solution
+    if solution:
+        if try_solve:
+            update_board(x, y)
+    else:
+        print("No solution exists!")
 
 
 def is_running():
     global context
+    if not context["solution"]:
+        return False
+    if not context["try_solve"]:
+        return False
     x, y = context["select_position"]
     moves = len(get_valid_moves(x, y))
     return moves > 0
@@ -192,7 +254,7 @@ def update():
     update_board(x, y)
 
 
-def show_game_over():
+def show_summary():
     global context
     board = context["board"]
     visited = context["visited"]
@@ -202,6 +264,26 @@ def show_game_over():
     else:
         print("No more possible moves!")
         print(f"Your knight visited {visited} squares!")
+
+
+def show_solution():
+    global context
+    solution = context["solution"]
+    if not solution:
+        return
+    print()
+    print("Here's the solution!")
+    show_board([list(map(str, r)) for r in solution])
+
+
+def show_game_over():
+    global context
+    try_solve = context["try_solve"]
+    solution = context["solution"]
+    if solution and try_solve:
+        show_summary()
+    else:
+        show_solution()
 
 
 def main():
