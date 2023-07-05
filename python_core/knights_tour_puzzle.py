@@ -22,14 +22,16 @@ def move_in_range(x, y, width, height):
     return (0 <= x < width) and (0 <= y < height)
 
 
+def empty_cell(board, x, y):
+    return board[y][x] == "_"
+
+
 def valid_move(x, y):
     global context
     width, height = context["size"]
     if not move_in_range(x, y, width, height):
         return False
-
-    board = context["board"]
-    return board[y][x] == "_"
+    return empty_cell(context["board"], x, y)
 
 
 def input_position_with_prompt(prompt):
@@ -37,7 +39,6 @@ def input_position_with_prompt(prompt):
         try:
             position = input(prompt)
             x, y = [int(v) - 1 for v in position.split(" ")]
-
             if not valid_move(x, y):
                 raise ValueError("Invalid range")
             return x, y
@@ -45,7 +46,7 @@ def input_position_with_prompt(prompt):
             print("Invalid move!", end=" ")
 
 
-def get_valid_moves(x, y):
+def get_moves_from(x, y, width, height):
     offsets = [
         [-1, -2],
         [1, -2],
@@ -56,10 +57,18 @@ def get_valid_moves(x, y):
         [-1, 2],
         [1, 2],
     ]
-    result = []
     for ox, oy in offsets:
         nx = x + ox
         ny = y + oy
+        if move_in_range(nx, ny, width, height):
+            yield [nx, ny]
+
+
+def get_valid_moves(x, y):
+    global context
+    width, height = context["size"]
+    result = []
+    for nx, ny in get_moves_from(x, y, width, height):
         if valid_move(nx, ny):
             result.append([nx, ny])
 
