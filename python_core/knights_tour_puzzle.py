@@ -46,7 +46,7 @@ def input_position_with_prompt(prompt):
 
 
 def get_valid_moves(x, y):
-    template = [
+    offsets = [
         [-1, -2],
         [1, -2],
         [-2, -1],
@@ -57,9 +57,9 @@ def get_valid_moves(x, y):
         [1, 2],
     ]
     result = []
-    for xt, yt in template:
-        nx = x + xt
-        ny = y + yt
+    for ox, oy in offsets:
+        nx = x + ox
+        ny = y + oy
         if valid_move(nx, ny):
             result.append([nx, ny])
 
